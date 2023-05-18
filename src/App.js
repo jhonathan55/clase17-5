@@ -1,24 +1,35 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
-
+import Nav from './components/Nav';
+import Table from './components/Table';
 function App() {
+  const [products, setProducts] = useState([]);
+  const [search, setSearch] = useState('');
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/product');
+        const products = await response.json();
+        console.log('products', products);
+        setProducts(products);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchProducts();
+  }, []);
+  const handleSearchChange = (value) => {
+    setSearch(value);
+    console.log(value, 'desde app');
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Nav onSearchChange={handleSearchChange} />
+      <div className="container">
+        <Table productsData={products} />
+      </div>
+    </>
   );
 }
 
